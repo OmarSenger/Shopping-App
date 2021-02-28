@@ -1,8 +1,39 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'file:///C:/Users/lenovo/IdeaProjects/shopping/lib/ui/view.dart';
+import 'login.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
-class Products extends StatelessWidget {
 
+class Products extends StatefulWidget {
+
+  @override
+  _ProductsState createState() => _ProductsState();
+}
+
+class _ProductsState extends State<Products> {
+
+  GoogleSignIn googleSignIn = GoogleSignIn();
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  FacebookLogin facebookLogin = FacebookLogin();
+  var options = <String>['Settings','Logout'];
+
+
+  void handleClick(String value) {
+    setState(() {
+      switch (value) {
+        case 'Settings':
+          break;
+        case 'Logout':
+          googleSignIn.signOut();
+          facebookLogin.logOut();
+          firebaseAuth.signOut();
+          Navigator.push(context, MaterialPageRoute(builder:(BuildContext context) => LoginScreen()));
+          break;
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -31,6 +62,17 @@ class Products extends StatelessWidget {
             IconButton(
               icon:Icon(Icons.shopping_cart_outlined,color:Colors.black),
               onPressed: ()async {
+              },
+            ),
+            PopupMenuButton<String>(
+              onSelected: handleClick ,
+              itemBuilder: (BuildContext context) {
+                return options.map((String choice) {
+                  return PopupMenuItem<String>(
+                    value: choice,
+                    child: Text(choice),
+                  );
+                }).toList();
               },
             ),
           ],
